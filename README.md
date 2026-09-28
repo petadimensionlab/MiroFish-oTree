@@ -24,7 +24,7 @@ Session configs in `settings.py`: `pd_debate` (fixed-strategy bots, no bridge ne
 
 ```sh
 python -m venv .venv && source .venv/bin/activate
-pip install -r mirofish_otree_test/requirements.txt
+pip install "otree==6.0.15" requests   # tested with Python 3.12
 cd mirofish_otree_test
 
 # fixed-strategy bots, no bridge
