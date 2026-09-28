@@ -18,6 +18,14 @@ SESSION_CONFIGS = [
         doc="Iterated PD, 24 fixed pairs x 10 rounds, agents only",
     ),
     dict(
+        name='pd_debate_faults',
+        app_sequence=['pd_debate'],
+        num_demo_participants=48,
+        doc="pd_debate with bridge fault injection (Phase 2 robustness test)",
+        bridge_policy='tft',
+        bridge_inject_error_rate=0.3,
+    ),
+    dict(
         name='live_test',
         app_sequence=['live_test'],
         num_demo_participants=2,

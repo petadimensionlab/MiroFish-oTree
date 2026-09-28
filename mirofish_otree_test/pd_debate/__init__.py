@@ -4,6 +4,8 @@ from pathlib import Path
 
 from otree.api import *
 
+from . import bridge_client
+
 doc = """
 Iterated prisoner's dilemma for MiroFish agents (Phase 1).
 
@@ -61,6 +63,16 @@ def creating_session(subsession: Subsession):
         if subsession.round_number == 1:
             player.participant.label = f"agent_{agent_id}"
 
+    if subsession.round_number == 1 and bridge_client.enabled():
+        cfg = subsession.session.config
+        bridge_client.configure(
+            subsession.session.code,
+            policy=cfg.get('bridge_policy', 'random'),
+            seed=cfg.get('bridge_seed', 0),
+            inject_delay_sec=cfg.get('bridge_inject_delay_sec', 0.0),
+            inject_error_rate=cfg.get('bridge_inject_error_rate', 0.0),
+        )
+
 
 def payoff_matrix(session):
     return session.config.get('pd_payoffs', C.DEFAULT_PAYOFFS)
@@ -91,6 +103,20 @@ def on_round_complete(subsession: Subsession):
         cooperation_rate=sum(p.choice == COOPERATE for p in players) / len(players),
         timestamp=time.time(),
     )
+    if bridge_client.enabled():
+        record['bridge'] = bridge_client.notify_round_complete(
+            subsession.session.code, subsession.round_number,
+            dict(
+                n_players=record['n_players'],
+                cooperation_rate=record['cooperation_rate'],
+                outcomes=[
+                    dict(agent_id=p.agent_id, choice=p.choice,
+                         source=p.field_maybe_none('decision_source'),
+                         missing=p.field_maybe_none('decision_missing'))
+                    for p in players
+                ],
+            ),
+        )
     with BARRIER_LOG.open("a") as f:
         f.write(json.dumps(record) + "\n")
 
