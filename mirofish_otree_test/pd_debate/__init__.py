@@ -82,6 +82,7 @@ def creating_session(subsession: Subsession):
             simulation_dir=cfg.get('bridge_simulation_dir') or os.environ.get('MF_SIMULATION_DIR', ''),
             platform=cfg.get('bridge_platform', 'twitter'),
             include_feed=cfg.get('bridge_include_feed', True),
+            feed_exclude_own=cfg.get('bridge_feed_exclude_own', False),
             num_rounds=C.NUM_ROUNDS,
             default_choice=cfg.get('bridge_default_choice', COOPERATE),
             swap_labels=cfg.get('bridge_swap_labels', False),
