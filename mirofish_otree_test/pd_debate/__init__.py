@@ -86,6 +86,10 @@ def creating_session(subsession: Subsession):
             num_rounds=C.NUM_ROUNDS,
             default_choice=cfg.get('bridge_default_choice', COOPERATE),
             swap_labels=cfg.get('bridge_swap_labels', False),
+            # symbols with per-session random mapping unless a session asks for letters
+            label_scheme=cfg.get('bridge_label_scheme', 'symbols'),
+            label_randomize=cfg.get('bridge_label_randomize', True),
+            label_unit=cfg.get('bridge_label_unit', 'session'),
             payoffs=payoff_matrix(subsession.session),
             debate_rounds=cfg.get('bridge_debate_rounds', 0),
             debate_players_only=cfg.get('bridge_debate_players_only', True),

@@ -32,6 +32,8 @@ SESSION_CONFIGS = [
         doc="pd_debate with LLM decisions via the step-server (set MF_SIMULATION_DIR or bridge_simulation_id). Pure baseline: no debate, no result posts",
         bridge_policy='llm',
         bridge_inject_results='none',
+        bridge_comprehension_check=True,
+        bridge_belief_survey=True,
     ),
     dict(
         name='pd_debate_llm_debate',
@@ -41,6 +43,8 @@ SESSION_CONFIGS = [
         bridge_policy='llm',
         bridge_debate_rounds=2,
         bridge_inject_results='each',
+        bridge_comprehension_check=True,
+        bridge_belief_survey=True,
         bridge_opening_post=(
             "Question for everyone: when you deal with the same person again and again, "
             "is it smarter to trust them or to look out for yourself first? Why?"
@@ -80,6 +84,8 @@ SESSION_CONFIGS = [
         bridge_inject_results='none',
         bridge_belief_survey=True,
         bridge_swap_labels=True,
+        bridge_label_scheme='letters',
+        bridge_label_randomize=False,
     ),
     dict(
         name='live_test',
