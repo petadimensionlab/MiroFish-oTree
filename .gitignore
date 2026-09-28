@@ -1,0 +1,8 @@
+.venv/
+__pycache__/
+*.pyc
+db.sqlite3
+*.log
+*.jsonl
+export_*/
+__temp_bots_*/

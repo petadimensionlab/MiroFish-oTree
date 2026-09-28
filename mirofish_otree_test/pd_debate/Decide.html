@@ -1,0 +1,12 @@
+{{ block title }}Round {{ player.round_number }} of {{ C.NUM_ROUNDS }}{{ endblock }}
+{{ block content }}
+<p>You and one other participant each choose Option A or Option B.</p>
+<table class="table">
+  <tr><th></th><th>Other chooses A</th><th>Other chooses B</th></tr>
+  <tr><th>You choose A</th><td>{{ m.R }} / {{ m.R }}</td><td>{{ m.S }} / {{ m.T }}</td></tr>
+  <tr><th>You choose B</th><td>{{ m.T }} / {{ m.S }}</td><td>{{ m.P }} / {{ m.P }}</td></tr>
+</table>
+<p>(your points / other's points)</p>
+{{ formfield 'choice' }}
+{{ next_button }}
+{{ endblock }}
