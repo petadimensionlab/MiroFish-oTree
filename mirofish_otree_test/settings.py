@@ -51,6 +51,23 @@ SESSION_CONFIGS = [
         ),
     ),
     dict(
+        name='pd_debate_llm_debate_topic',
+        app_sequence=['pd_debate'],
+        num_demo_participants=48,
+        doc="pd_debate_llm_debate + topic post repeated before every debate phase + per-agent labels (NOTES #43, #44)",
+        bridge_policy='llm',
+        bridge_debate_rounds=2,
+        bridge_inject_results='each',
+        bridge_opening_post=(
+            "Question for everyone: when you deal with the same person again and again, "
+            "is it smarter to trust them or to look out for yourself first? Why?"
+        ),
+        bridge_repeat_opening=True,
+        bridge_label_unit='agent',
+        bridge_comprehension_check=True,
+        bridge_belief_survey=True,
+    ),
+    dict(
         name='pd_debate_llm_opening',
         app_sequence=['pd_debate'],
         num_demo_participants=48,
