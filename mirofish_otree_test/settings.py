@@ -61,6 +61,16 @@ SESSION_CONFIGS = [
         bridge_belief_survey=True,
     ),
     dict(
+        name='pd_debate_llm_debate_noinject',
+        app_sequence=['pd_debate'],
+        num_demo_participants=48,
+        doc="Debate rounds between game rounds, no result posts, no opening post (NOTES #35)",
+        bridge_policy='llm',
+        bridge_debate_rounds=2,
+        bridge_inject_results='none',
+        bridge_belief_survey=True,
+    ),
+    dict(
         name='live_test',
         app_sequence=['live_test'],
         num_demo_participants=2,
