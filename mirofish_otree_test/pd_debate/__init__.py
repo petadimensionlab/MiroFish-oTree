@@ -97,6 +97,7 @@ def creating_session(subsession: Subsession):
             opening_agent_id=cfg.get('bridge_opening_agent_id', -1),
             repeat_opening=cfg.get('bridge_repeat_opening', False),
             belief_survey=cfg.get('bridge_belief_survey', False),
+            comprehension_check=cfg.get('bridge_comprehension_check', False),
         )
         if 'error' in result:
             # Bots still run (every decision falls back to the default), but
