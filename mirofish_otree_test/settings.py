@@ -47,6 +47,20 @@ SESSION_CONFIGS = [
         ),
     ),
     dict(
+        name='pd_debate_llm_opening',
+        app_sequence=['pd_debate'],
+        num_demo_participants=48,
+        doc="Isolates the opening topic post (NOTES #35): opening post + opening debate, no debate or result posts between rounds",
+        bridge_policy='llm',
+        bridge_debate_rounds=0,
+        bridge_inject_results='none',
+        bridge_opening_post=(
+            "Question for everyone: when you deal with the same person again and again, "
+            "is it smarter to trust them or to look out for yourself first? Why?"
+        ),
+        bridge_belief_survey=True,
+    ),
+    dict(
         name='live_test',
         app_sequence=['live_test'],
         num_demo_participants=2,

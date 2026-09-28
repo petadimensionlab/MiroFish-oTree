@@ -84,6 +84,7 @@ def creating_session(subsession: Subsession):
             include_feed=cfg.get('bridge_include_feed', True),
             num_rounds=C.NUM_ROUNDS,
             default_choice=cfg.get('bridge_default_choice', COOPERATE),
+            swap_labels=cfg.get('bridge_swap_labels', False),
             payoffs=payoff_matrix(subsession.session),
             debate_rounds=cfg.get('bridge_debate_rounds', 0),
             debate_players_only=cfg.get('bridge_debate_players_only', True),
@@ -93,6 +94,8 @@ def creating_session(subsession: Subsession):
             announcer_agent_id=cfg.get('bridge_announcer_agent_id', -1),
             opening_post=cfg.get('bridge_opening_post', ''),
             opening_agent_id=cfg.get('bridge_opening_agent_id', -1),
+            repeat_opening=cfg.get('bridge_repeat_opening', False),
+            belief_survey=cfg.get('bridge_belief_survey', False),
         )
         if 'error' in result:
             # Bots still run (every decision falls back to the default), but
