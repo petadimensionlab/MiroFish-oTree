@@ -29,8 +29,9 @@ SESSION_CONFIGS = [
         name='pd_debate_llm',
         app_sequence=['pd_debate'],
         num_demo_participants=48,
-        doc="pd_debate with LLM decisions via the step-server (set MF_SIMULATION_DIR or bridge_simulation_id)",
+        doc="pd_debate with LLM decisions via the step-server (set MF_SIMULATION_DIR or bridge_simulation_id). Pure baseline: no debate, no result posts",
         bridge_policy='llm',
+        bridge_inject_results='none',
     ),
     dict(
         name='pd_debate_llm_debate',

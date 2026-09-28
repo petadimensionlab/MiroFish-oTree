@@ -87,6 +87,8 @@ def creating_session(subsession: Subsession):
             payoffs=payoff_matrix(subsession.session),
             debate_rounds=cfg.get('bridge_debate_rounds', 0),
             debate_players_only=cfg.get('bridge_debate_players_only', True),
+            debate_ignore_hours=cfg.get('bridge_debate_ignore_hours', True),
+            debate_min_active=cfg.get('bridge_debate_min_active', 2),
             inject_results=cfg.get('bridge_inject_results', 'each'),
             announcer_agent_id=cfg.get('bridge_announcer_agent_id', -1),
             opening_post=cfg.get('bridge_opening_post', ''),
