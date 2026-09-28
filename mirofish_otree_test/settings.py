@@ -71,6 +71,17 @@ SESSION_CONFIGS = [
         bridge_belief_survey=True,
     ),
     dict(
+        name='pd_debate_llm_debate_noinject_swap',
+        app_sequence=['pd_debate'],
+        num_demo_participants=48,
+        doc="Same as pd_debate_llm_debate_noinject with A/B swapped for agents (NOTES #38: label leak test)",
+        bridge_policy='llm',
+        bridge_debate_rounds=2,
+        bridge_inject_results='none',
+        bridge_belief_survey=True,
+        bridge_swap_labels=True,
+    ),
+    dict(
         name='live_test',
         app_sequence=['live_test'],
         num_demo_participants=2,
