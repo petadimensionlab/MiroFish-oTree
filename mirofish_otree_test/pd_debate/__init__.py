@@ -1,4 +1,5 @@
 import json
+import os
 import time
 from pathlib import Path
 
@@ -65,13 +66,37 @@ def creating_session(subsession: Subsession):
 
     if subsession.round_number == 1 and bridge_client.enabled():
         cfg = subsession.session.config
-        bridge_client.configure(
+        agents = []
+        for group in subsession.get_groups():
+            p1, p2 = group.get_players()
+            agents.append(dict(agent_id=p1.agent_id, partner_agent_id=p2.agent_id))
+            agents.append(dict(agent_id=p2.agent_id, partner_agent_id=p1.agent_id))
+        result = bridge_client.configure(
             subsession.session.code,
+            agents=agents,
             policy=cfg.get('bridge_policy', 'random'),
             seed=cfg.get('bridge_seed', 0),
             inject_delay_sec=cfg.get('bridge_inject_delay_sec', 0.0),
             inject_error_rate=cfg.get('bridge_inject_error_rate', 0.0),
+            simulation_id=cfg.get('bridge_simulation_id', ''),
+            simulation_dir=cfg.get('bridge_simulation_dir') or os.environ.get('MF_SIMULATION_DIR', ''),
+            platform=cfg.get('bridge_platform', 'twitter'),
+            include_feed=cfg.get('bridge_include_feed', True),
+            num_rounds=C.NUM_ROUNDS,
+            default_choice=cfg.get('bridge_default_choice', COOPERATE),
+            payoffs=payoff_matrix(subsession.session),
+            debate_rounds=cfg.get('bridge_debate_rounds', 0),
+            debate_players_only=cfg.get('bridge_debate_players_only', True),
+            inject_results=cfg.get('bridge_inject_results', 'each'),
+            announcer_agent_id=cfg.get('bridge_announcer_agent_id', -1),
+            opening_post=cfg.get('bridge_opening_post', ''),
+            opening_agent_id=cfg.get('bridge_opening_agent_id', -1),
         )
+        if 'error' in result:
+            # Bots still run (every decision falls back to the default), but
+            # make the misconfiguration visible in the barrier log.
+            with BARRIER_LOG.open("a") as f:
+                f.write(json.dumps(dict(event="configure_failed", error=result['error'])) + "\n")
 
 
 def payoff_matrix(session):
@@ -110,7 +135,8 @@ def on_round_complete(subsession: Subsession):
                 n_players=record['n_players'],
                 cooperation_rate=record['cooperation_rate'],
                 outcomes=[
-                    dict(agent_id=p.agent_id, choice=p.choice,
+                    dict(agent_id=p.agent_id, choice=p.choice, payoff=float(p.payoff),
+                         partner_agent_id=p.get_others_in_group()[0].agent_id,
                          source=p.field_maybe_none('decision_source'),
                          missing=p.field_maybe_none('decision_missing'))
                     for p in players

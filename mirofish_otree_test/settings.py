@@ -26,6 +26,26 @@ SESSION_CONFIGS = [
         bridge_inject_error_rate=0.3,
     ),
     dict(
+        name='pd_debate_llm',
+        app_sequence=['pd_debate'],
+        num_demo_participants=48,
+        doc="pd_debate with LLM decisions via the step-server (set MF_SIMULATION_DIR or bridge_simulation_id)",
+        bridge_policy='llm',
+    ),
+    dict(
+        name='pd_debate_llm_debate',
+        app_sequence=['pd_debate'],
+        num_demo_participants=48,
+        doc="LLM decisions with a debate phase between rounds (closed loop, Phase 4)",
+        bridge_policy='llm',
+        bridge_debate_rounds=2,
+        bridge_inject_results='each',
+        bridge_opening_post=(
+            "Question for everyone: when you deal with the same person again and again, "
+            "is it smarter to trust them or to look out for yourself first? Why?"
+        ),
+    ),
+    dict(
         name='live_test',
         app_sequence=['live_test'],
         num_demo_participants=2,
