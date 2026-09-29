@@ -9,6 +9,7 @@ The game side lives here (MIT). It talks to a MiroFish experiment bridge over HT
 | App | Purpose |
 |---|---|
 | `pd_debate` | Iterated prisoner's dilemma, 2-player fixed pairs × 10 rounds. Bots ask the bridge for decisions; a round barrier notifies the bridge once all pairs have submitted |
+| `pgg` | Linear public goods game, fixed groups of 4 × 10 rounds, endowment 20, multiplier 1.6 (session config `pgg_multiplier`). Bots ask the bridge (`game='pgg'`) for contributions; export `pgg_custom.csv` |
 | `mf_group`, `label_test`, `live_test` | Probes used to verify oTree 6 behavior (bot HTTP calls, wait-page barriers, `participant.label`, `live_method`) |
 
 ## `pd_debate`

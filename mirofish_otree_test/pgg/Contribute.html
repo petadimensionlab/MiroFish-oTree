@@ -1,0 +1,6 @@
+{{ block title }}Round {{ player.round_number }} of {{ C.NUM_ROUNDS }}{{ endblock }}
+{{ block content }}
+<p>You receive {{ C.ENDOWMENT }} points. Points put into the group project are multiplied by {{ multiplier }} and shared equally among the {{ C.PLAYERS_PER_GROUP }} group members.</p>
+{{ formfield 'contribution' }}
+{{ next_button }}
+{{ endblock }}

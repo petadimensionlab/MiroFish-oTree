@@ -156,6 +156,28 @@ SESSION_CONFIGS = [
         bridge_belief_survey=True,
     ),
     dict(
+        name='pgg',
+        app_sequence=['pgg'],
+        num_demo_participants=16,
+        doc="Public goods game, fixed groups of 4 x 10 rounds, endowment 20, multiplier 1.6 (MPCR 0.4); fixed-strategy bots, no bridge",
+    ),
+    dict(
+        name='pgg_llm',
+        app_sequence=['pgg'],
+        num_demo_participants=16,
+        doc=("Public goods game with LLM decisions via the step-server (MF_SIMULATION_DIR). "
+             "No chat, no debate, no feed, no result posts (NOTES #51, #52)"),
+        bridge_policy='llm',
+        bridge_include_feed=False,
+        bridge_inject_results='none',
+        bridge_comprehension_check=True,
+        bridge_belief_survey=True,
+        bridge_belief_statement=(
+            "When you are in the same group again and again, it is better to contribute to what "
+            "benefits everyone than to look out for yourself first."
+        ),
+    ),
+    dict(
         name='live_test',
         app_sequence=['live_test'],
         num_demo_participants=2,
