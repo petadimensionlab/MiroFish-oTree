@@ -105,6 +105,57 @@ SESSION_CONFIGS = [
         bridge_label_randomize=False,
     ),
     dict(
+        name='pd_debate_llm_chat',
+        app_sequence=['pd_debate'],
+        num_demo_participants=48,
+        # NOT for the actual experiments (MiroFish NOTES.md #51): with a direct pair chat the
+        # partners settle their choices between themselves, leaving nothing for the platform
+        # discourse to affect. Use chat_turns=0 configs (pd_debate_llm_nochat, pd_debate_llm_debate*)
+        # for the study; the chat configs are a check / reference condition only.
+        doc=("REFERENCE ONLY, not the study condition (NOTES #51). "
+             "Pair chat: before every round the two partners exchange private messages about the game "
+             "(cheap talk, not binding), then decide. No debate rounds, no feed, no result posts. "
+             "Labels shared within a pair, random across pairs"),
+        bridge_policy='llm',
+        bridge_chat_turns=4,
+        bridge_include_feed=False,
+        bridge_inject_results='none',
+        bridge_label_unit='pair',
+        bridge_comprehension_check=True,
+        bridge_belief_survey=True,
+    ),
+    dict(
+        name='pd_debate_llm_chat_debate',
+        app_sequence=['pd_debate'],
+        num_demo_participants=48,
+        doc="REFERENCE ONLY, not the study condition (NOTES #51). pd_debate_llm_chat + debate rounds with the repeated topic post and result posts (points only) on the platform",
+        bridge_policy='llm',
+        bridge_chat_turns=4,
+        bridge_debate_rounds=2,
+        bridge_inject_results='each',
+        bridge_opening_post=(
+            "Question for everyone: when you deal with the same person again and again, "
+            "is it smarter to trust them or to look out for yourself first? Why?"
+        ),
+        bridge_repeat_opening=True,
+        bridge_label_unit='pair',
+        bridge_comprehension_check=True,
+        bridge_belief_survey=True,
+    ),
+    dict(
+        name='pd_debate_llm_nochat',
+        app_sequence=['pd_debate'],
+        num_demo_participants=48,
+        doc="Control for pd_debate_llm_chat: same settings with chat_turns=0",
+        bridge_policy='llm',
+        bridge_chat_turns=0,
+        bridge_include_feed=False,
+        bridge_inject_results='none',
+        bridge_label_unit='pair',
+        bridge_comprehension_check=True,
+        bridge_belief_survey=True,
+    ),
+    dict(
         name='live_test',
         app_sequence=['live_test'],
         num_demo_participants=2,

@@ -1,3 +1,5 @@
+import json
+
 from otree.api import Bot, Submission, expect
 from . import Decide, Results, COOPERATE, DEFECT, payoff_matrix, pd_payoff, bridge_client
 
@@ -36,6 +38,7 @@ class PlayerBot(Bot):
             fields = dict(
                 choice=d['choice'], decision_source=d['source'], decision_reason=d['reason'],
                 decision_latency_sec=d['latency_sec'], decision_missing=d['missing'],
+                chat_transcript=json.dumps(d['chat'], ensure_ascii=False) if d.get('chat') is not None else '',
             )
         else:
             strategy = STRATEGIES[(self.participant.id_in_session - 1) % len(STRATEGIES)]

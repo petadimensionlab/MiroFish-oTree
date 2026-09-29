@@ -51,6 +51,9 @@ class Player(BasePlayer):
     decision_reason = models.LongStringField(blank=True)
     decision_latency_sec = models.FloatField(blank=True)
     decision_missing = models.BooleanField(initial=False, blank=True)
+    # This round's private pair chat before the decision (bridge chat_turns > 0),
+    # JSON [{"agent_id", "text"}]; identical for both partners
+    chat_transcript = models.LongStringField(blank=True)
 
 
 # Must be a module-level function: as a Subsession method oTree 6 silently
@@ -102,6 +105,9 @@ def creating_session(subsession: Subsession):
             repeat_opening=cfg.get('bridge_repeat_opening', False),
             belief_survey=cfg.get('bridge_belief_survey', False),
             comprehension_check=cfg.get('bridge_comprehension_check', False),
+            chat_turns=cfg.get('bridge_chat_turns', 0),
+            chat_memory_rounds=cfg.get('bridge_chat_memory_rounds', 3),
+            chat_max_chars=cfg.get('bridge_chat_max_chars', 400),
         )
         if 'error' in result:
             # Bots still run (every decision falls back to the default), but
@@ -167,6 +173,7 @@ class Decide(Page):
         'decision_reason',
         'decision_latency_sec',
         'decision_missing',
+        'chat_transcript',
     ]
 
     @staticmethod
@@ -198,6 +205,7 @@ def custom_export(players):
         'round_number', 'pair_id', 'id_in_pair', 'partner_agent_id',
         'choice', 'cooperated', 'partner_choice', 'payoff',
         'decision_source', 'decision_missing', 'decision_latency_sec', 'decision_reason',
+        'chat_transcript',
     ]
     for p in players:
         if p.field_maybe_none('choice') is None:
@@ -210,4 +218,5 @@ def custom_export(players):
             p.payoff,
             p.field_maybe_none('decision_source'), p.field_maybe_none('decision_missing'),
             p.field_maybe_none('decision_latency_sec'), p.field_maybe_none('decision_reason'),
+            p.field_maybe_none('chat_transcript'),
         ]

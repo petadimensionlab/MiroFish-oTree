@@ -47,7 +47,7 @@ def configure(session_code, **settings):
 
 
 def decide(session_code, round_number, agent_id, history, default_choice):
-    """Returns dict(choice, reason, source, latency_sec, missing, attempts)."""
+    """Returns dict(choice, reason, source, latency_sec, missing, attempts, chat)."""
     t0 = time.time()
     data, error, attempts = _post('/decide', {
         'session_code': session_code,
@@ -64,6 +64,7 @@ def decide(session_code, round_number, agent_id, history, default_choice):
             latency_sec=latency,
             missing=bool(data.get('missing', False)),
             attempts=attempts,
+            chat=data.get('chat'),
         )
     return dict(
         choice=default_choice,
@@ -72,6 +73,7 @@ def decide(session_code, round_number, agent_id, history, default_choice):
         latency_sec=latency,
         missing=True,
         attempts=attempts,
+        chat=None,
     )
 
 
