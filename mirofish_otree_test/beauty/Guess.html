@@ -1,0 +1,6 @@
+{{ block title }}Round {{ player.round_number }} of {{ C.NUM_ROUNDS }}{{ endblock }}
+{{ block content }}
+<p>Pick a number from 0 to {{ C.MAX_GUESS }}. The target is {{ C.P_TEXT }} of the group average; the closest member gets {{ C.PRIZE }} points.</p>
+{{ formfield 'guess' }}
+{{ next_button }}
+{{ endblock }}

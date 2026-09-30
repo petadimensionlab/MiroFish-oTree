@@ -68,38 +68,15 @@ def creating_session(subsession: Subsession):
             player.participant.label = f"agent_{player.agent_id}"
 
     if subsession.round_number == 1 and bridge_client.enabled():
-        cfg = subsession.session.config
         agents = []
         for group in subsession.get_groups():
             members = [p.agent_id for p in group.get_players()]
             agents += [dict(agent_id=a, group_agent_ids=members) for a in members]
-        result = bridge_client.configure(
-            subsession.session.code,
-            agents=agents,
-            game='pgg',
-            pgg=dict(endowment=C.ENDOWMENT, multiplier=multiplier(subsession.session),
-                     group_size=C.PLAYERS_PER_GROUP),
-            policy=cfg.get('bridge_policy', 'random'),
-            seed=cfg.get('bridge_seed', 0),
-            simulation_id=cfg.get('bridge_simulation_id', ''),
-            simulation_dir=cfg.get('bridge_simulation_dir') or os.environ.get('MF_SIMULATION_DIR', ''),
-            platform=cfg.get('bridge_platform', 'twitter'),
-            include_feed=cfg.get('bridge_include_feed', False),
-            num_rounds=C.NUM_ROUNDS,
-            debate_rounds=cfg.get('bridge_debate_rounds', 0),
-            debate_players_only=cfg.get('bridge_debate_players_only', True),
-            debate_ignore_hours=cfg.get('bridge_debate_ignore_hours', True),
-            debate_min_active=cfg.get('bridge_debate_min_active', 2),
-            inject_results=cfg.get('bridge_inject_results', 'none'),
-            opening_post=cfg.get('bridge_opening_post', ''),
-            repeat_opening=cfg.get('bridge_repeat_opening', False),
-            belief_survey=cfg.get('bridge_belief_survey', False),
-            belief_statement=cfg.get('bridge_belief_statement'),
-            comprehension_check=cfg.get('bridge_comprehension_check', False),
-        )
-        if 'error' in result:
-            with BARRIER_LOG.open("a") as f:
-                f.write(json.dumps(dict(event="configure_failed", error=result['error'])) + "\n")
+        bridge_client.configure_game(
+            subsession.session, 'pgg',
+            dict(endowment=C.ENDOWMENT, multiplier=multiplier(subsession.session),
+                 group_size=C.PLAYERS_PER_GROUP),
+            agents, C.NUM_ROUNDS, BARRIER_LOG)
 
 
 def set_payoffs(group: Group):

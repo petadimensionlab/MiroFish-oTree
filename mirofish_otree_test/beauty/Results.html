@@ -1,0 +1,5 @@
+{{ block title }}Results of round {{ player.round_number }}{{ endblock }}
+{{ block content }}
+<p>You picked {{ player.guess }}. The target was {{ group.target }}. You earned {{ player.earnings }} points.</p>
+{{ next_button }}
+{{ endblock }}
