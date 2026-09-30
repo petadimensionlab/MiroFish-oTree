@@ -1,3 +1,4 @@
+import json
 from os import environ
 
 SESSION_CONFIGS = [
@@ -178,6 +179,54 @@ SESSION_CONFIGS = [
         ),
     ),
     dict(
+        name='beauty',
+        app_sequence=['beauty'],
+        num_demo_participants=16,
+        doc="p-beauty contest, fixed groups of 4 x 10 rounds, guess 0-100, target 2/3 of the mean, prize 20; fixed-strategy bots",
+    ),
+    dict(
+        name='beauty_llm',
+        app_sequence=['beauty'],
+        num_demo_participants=16,
+        doc="p-beauty contest with LLM decisions (no chat, no debate, no feed, no result posts)",
+        bridge_policy='llm',
+        bridge_include_feed=False,
+        bridge_inject_results='none',
+        bridge_comprehension_check=True,
+    ),
+    dict(
+        name='trust',
+        app_sequence=['trust'],
+        num_demo_participants=16,
+        doc="Trust (investment) game, fixed pairs and roles x 10 rounds, endowment 10, multiplier 3; fixed-strategy bots",
+    ),
+    dict(
+        name='trust_llm',
+        app_sequence=['trust'],
+        num_demo_participants=16,
+        doc="Trust game with LLM decisions (no chat, no debate, no feed, no result posts)",
+        bridge_policy='llm',
+        bridge_include_feed=False,
+        bridge_inject_results='none',
+        bridge_comprehension_check=True,
+    ),
+    dict(
+        name='ultimatum',
+        app_sequence=['ultimatum'],
+        num_demo_participants=16,
+        doc="Ultimatum game, fixed pairs and roles x 10 rounds, pie 20; fixed-strategy bots",
+    ),
+    dict(
+        name='ultimatum_llm',
+        app_sequence=['ultimatum'],
+        num_demo_participants=16,
+        doc="Ultimatum game with LLM decisions (no chat, no debate, no feed, no result posts)",
+        bridge_policy='llm',
+        bridge_include_feed=False,
+        bridge_inject_results='none',
+        bridge_comprehension_check=True,
+    ),
+    dict(
         name='live_test',
         app_sequence=['live_test'],
         num_demo_participants=2,
@@ -190,7 +239,11 @@ SESSION_CONFIGS = [
 # e.g. self.session.config['participation_fee']
 
 SESSION_CONFIG_DEFAULTS = dict(
-    real_world_currency_per_point=1.00, participation_fee=0.00, doc=""
+    real_world_currency_per_point=1.00, participation_fee=0.00, doc="",
+    # Seating order: which MiroFish agent sits in which participant slot (pairs /
+    # groups are consecutive), e.g. personas_meta.json "agent_order" of
+    # make_workplace_sim.py. Unset: participant i is agent i-1.
+    agent_ids=json.loads(environ['MF_AGENT_IDS']) if environ.get('MF_AGENT_IDS') else None,
 )
 
 PARTICIPANT_FIELDS = []

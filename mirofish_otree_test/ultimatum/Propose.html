@@ -1,0 +1,6 @@
+{{ block title }}Round {{ player.round_number }} of {{ C.NUM_ROUNDS }}{{ endblock }}
+{{ block content }}
+<p>You are the first person. Propose how many of {{ C.PIE }} points go to the second person.</p>
+{{ formfield 'offer' }}
+{{ next_button }}
+{{ endblock }}

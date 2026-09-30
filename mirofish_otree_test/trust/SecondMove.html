@@ -1,0 +1,6 @@
+{{ block title }}Round {{ player.round_number }} of {{ C.NUM_ROUNDS }}{{ endblock }}
+{{ block content }}
+<p>You are the second person. You received {{ group.sent }} × {{ C.MULTIPLIER }} points.</p>
+{{ formfield 'send_back' }}
+{{ next_button }}
+{{ endblock }}

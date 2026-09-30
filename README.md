@@ -10,6 +10,9 @@ The game side lives here (MIT). It talks to a MiroFish experiment bridge over HT
 |---|---|
 | `pd_debate` | Iterated prisoner's dilemma, 2-player fixed pairs × 10 rounds. Bots ask the bridge for decisions; a round barrier notifies the bridge once all pairs have submitted |
 | `pgg` | Linear public goods game, fixed groups of 4 × 10 rounds, endowment 20, multiplier 1.6 (session config `pgg_multiplier`). Bots ask the bridge (`game='pgg'`) for contributions; export `pgg_custom.csv` |
+| `beauty` | p-beauty contest, fixed groups of 4 × 10 rounds, guess 0–100, closest to 2/3 of the mean wins 20 points (`game='beauty'`) |
+| `trust` | Trust (investment) game, fixed pairs and roles × 10 rounds, both get 10, amount sent tripled; sequential (`game='trust'`) |
+| `ultimatum` | Ultimatum game, fixed pairs and roles × 10 rounds, pie 20; sequential (`game='ultimatum'`) |
 | `mf_group`, `label_test`, `live_test` | Probes used to verify oTree 6 behavior (bot HTTP calls, wait-page barriers, `participant.label`, `live_method`) |
 
 ## `pd_debate`
@@ -22,6 +25,12 @@ The game side lives here (MIT). It talks to a MiroFish experiment bridge over HT
 Session configs in `settings.py`: `pd_debate` (fixed-strategy bots, no bridge needed), `pd_debate_faults`, `pd_debate_llm`, `pd_debate_llm_debate`, `pd_debate_llm_debate_topic`, `pd_debate_llm_opening`, `pd_debate_llm_debate_noinject`, `pd_debate_llm_debate_noinject_swap`, `pd_debate_llm_nochat`, and the reference-only `pd_debate_llm_chat` / `pd_debate_llm_chat_debate`. Bridge settings are passed as `bridge_<name>` keys.
 
 Pair chat (`bridge_chat_turns > 0`): before each decision the two partners exchange private messages; the round's transcript is stored in `chat_transcript` (JSON) and exported. **It is a reference condition only**: the study asks whether platform discourse changes behavior, and a direct pair chat lets partners settle their choices between themselves, so study runs keep `chat_turns=0`.
+
+## Sequential games and seating
+
+In `trust` and `ultimatum` the first movers decide, a `StageBarrier` wait page (all groups) reports their decisions to the bridge (`/stage_complete`), and the second movers then get decisions that see the first move. Each app has `*_llm` session configs (no chat, no debate, no feed) and fixed-strategy bots without a bridge.
+
+`MF_AGENT_IDS` (JSON list) sets which MiroFish agent sits in which participant slot for any session config; consecutive slots form the pairs / groups. Use it with MiroFish's `make_workplace_sim.py` `agent_order` to seat colleagues from the same company but different departments together.
 
 ## Running
 
