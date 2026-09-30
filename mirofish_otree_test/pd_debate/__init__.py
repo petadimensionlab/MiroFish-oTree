@@ -54,6 +54,9 @@ class Player(BasePlayer):
     # This round's private pair chat before the decision (bridge chat_turns > 0),
     # JSON [{"agent_id", "text"}]; identical for both partners
     chat_transcript = models.LongStringField(blank=True)
+    # This round's one-to-one conversations with non-partners (bridge net_topology != 'none',
+    # NOTES #54), JSON [{"conv_id", "other_agent_id", "initiator", "messages": [{"agent_id", "text"}]}]
+    network_transcript = models.LongStringField(blank=True)
 
 
 # Must be a module-level function: as a Subsession method oTree 6 silently
@@ -108,6 +111,9 @@ def creating_session(subsession: Subsession):
             chat_turns=cfg.get('bridge_chat_turns', 0),
             chat_memory_rounds=cfg.get('bridge_chat_memory_rounds', 3),
             chat_max_chars=cfg.get('bridge_chat_max_chars', 400),
+            label_order_per_agent=cfg.get('bridge_label_order_per_agent', False),
+            # network chat: bridge_net_<name> -> net_<name> (bridge_client.net_settings)
+            **bridge_client.net_settings(cfg),
         )
         if 'error' in result:
             # Bots still run (every decision falls back to the default), but
@@ -174,6 +180,7 @@ class Decide(Page):
         'decision_latency_sec',
         'decision_missing',
         'chat_transcript',
+        'network_transcript',
     ]
 
     @staticmethod
@@ -205,7 +212,7 @@ def custom_export(players):
         'round_number', 'pair_id', 'id_in_pair', 'partner_agent_id',
         'choice', 'cooperated', 'partner_choice', 'payoff',
         'decision_source', 'decision_missing', 'decision_latency_sec', 'decision_reason',
-        'chat_transcript',
+        'chat_transcript', 'network_transcript',
     ]
     for p in players:
         if p.field_maybe_none('choice') is None:
@@ -218,5 +225,5 @@ def custom_export(players):
             p.payoff,
             p.field_maybe_none('decision_source'), p.field_maybe_none('decision_missing'),
             p.field_maybe_none('decision_latency_sec'), p.field_maybe_none('decision_reason'),
-            p.field_maybe_none('chat_transcript'),
+            p.field_maybe_none('chat_transcript'), p.field_maybe_none('network_transcript'),
         ]

@@ -39,6 +39,8 @@ class PlayerBot(Bot):
                 choice=d['choice'], decision_source=d['source'], decision_reason=d['reason'],
                 decision_latency_sec=d['latency_sec'], decision_missing=d['missing'],
                 chat_transcript=json.dumps(d['chat'], ensure_ascii=False) if d.get('chat') is not None else '',
+                network_transcript=(json.dumps(d['network_chat'], ensure_ascii=False)
+                                    if d.get('network_chat') is not None else ''),
             )
         else:
             strategy = STRATEGIES[(self.participant.id_in_session - 1) % len(STRATEGIES)]

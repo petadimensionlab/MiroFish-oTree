@@ -1,6 +1,27 @@
 import json
 from os import environ
 
+# Network communication study (MiroFish NOTES #54): every agent talks one to one with graph
+# neighbours who are never its PD partner / group member (#51). Same labelling in the control
+# (pd_net_off) so the conditions differ only in the network.
+NET_COMMON = dict(
+    bridge_policy='llm',
+    bridge_include_feed=False,
+    bridge_inject_results='none',
+    bridge_label_unit='session',
+    bridge_label_order_per_agent=True,
+    bridge_comprehension_check=True,
+    bridge_belief_survey=True,
+    bridge_net_mean_degree=4,
+    bridge_net_contact_mean=1.0,
+    bridge_net_contact_dispersion=0.5,
+    bridge_net_turns=2,
+)
+PGG_BELIEF = (
+    "When you are in the same group again and again, it is better to contribute to what "
+    "benefits everyone than to look out for yourself first."
+)
+
 SESSION_CONFIGS = [
     dict(
         name='mf_group',
@@ -226,6 +247,44 @@ SESSION_CONFIGS = [
         bridge_inject_results='none',
         bridge_comprehension_check=True,
     ),
+    dict(
+        name='pd_net_off',
+        app_sequence=['pd_debate'],
+        num_demo_participants=16,
+        doc="Control for pd_net_*: same labelling (session symbols, per-agent listing order), no network talk. Study condition: partners never talk (NOTES #51, #54)",
+        **{**NET_COMMON, 'bridge_net_topology': 'none'},
+    ),
+    *[
+        dict(
+            name=f'pd_net_{topo}',
+            app_sequence=['pd_debate'],
+            num_demo_participants=16,
+            doc=(f"Network talk, topology {topo}: one-to-one conversations with neighbours, contact rate "
+                 "gamma-Poisson (mean 1, dispersion 0.5). Study condition: partners never talk (NOTES #51, #54)"),
+            **{**NET_COMMON, 'bridge_net_topology': topo},
+        )
+        for topo in ('er', 'ba', 'ws', 'ring')
+    ],
+    dict(
+        name='pgg_net_off',
+        app_sequence=['pgg'],
+        num_demo_participants=16,
+        doc="Control for pgg_net_*: public goods game, no network talk (NOTES #54)",
+        bridge_belief_statement=PGG_BELIEF,
+        **{**NET_COMMON, 'bridge_net_topology': 'none'},
+    ),
+    *[
+        dict(
+            name=f'pgg_net_{topo}',
+            app_sequence=['pgg'],
+            num_demo_participants=16,
+            doc=(f"Public goods game with network talk, topology {topo}: conversations only with people "
+                 "outside one's own group (NOTES #51, #54)"),
+            bridge_belief_statement=PGG_BELIEF,
+            **{**NET_COMMON, 'bridge_net_topology': topo},
+        )
+        for topo in ('ba', 'er')
+    ],
     dict(
         name='live_test',
         app_sequence=['live_test'],
