@@ -47,7 +47,7 @@ def configure(session_code, **settings):
 
 
 def decide(session_code, round_number, agent_id, history, default_choice):
-    """Returns dict(choice, reason, source, latency_sec, missing, attempts)."""
+    """Returns dict(choice, reason, source, latency_sec, missing, attempts, chat)."""
     t0 = time.time()
     data, error, attempts = _post('/decide', {
         'session_code': session_code,
@@ -64,6 +64,7 @@ def decide(session_code, round_number, agent_id, history, default_choice):
             latency_sec=latency,
             missing=bool(data.get('missing', False)),
             attempts=attempts,
+            chat=data.get('chat'),
         )
     return dict(
         choice=default_choice,
@@ -72,7 +73,30 @@ def decide(session_code, round_number, agent_id, history, default_choice):
         latency_sec=latency,
         missing=True,
         attempts=attempts,
+        chat=None,
     )
+
+
+def decide_contribution(session_code, round_number, agent_id, history, endowment, default):
+    """Public goods game: returns dict(contribution, reason, source, latency_sec, missing, attempts)."""
+    t0 = time.time()
+    data, error, attempts = _post('/decide', {
+        'session_code': session_code,
+        'round_number': round_number,
+        'agent_id': agent_id,
+        'history': history,
+    })
+    latency = round(time.time() - t0, 3)
+    try:
+        value = int(data['choice']) if error is None else None
+    except (KeyError, TypeError, ValueError):
+        value = None
+    if value is not None and 0 <= value <= endowment:
+        return dict(contribution=value, reason=data.get('reason', ''), source=data.get('source', 'bridge'),
+                    latency_sec=latency, missing=bool(data.get('missing', False)), attempts=attempts)
+    return dict(contribution=default,
+                reason=f"bridge failed: {error or 'invalid contribution ' + repr(data)}",
+                source='default', latency_sec=latency, missing=True, attempts=attempts)
 
 
 def notify_round_complete(session_code, round_number, summary):

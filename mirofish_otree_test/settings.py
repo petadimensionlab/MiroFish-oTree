@@ -105,6 +105,79 @@ SESSION_CONFIGS = [
         bridge_label_randomize=False,
     ),
     dict(
+        name='pd_debate_llm_chat',
+        app_sequence=['pd_debate'],
+        num_demo_participants=48,
+        # NOT for the actual experiments (MiroFish NOTES.md #51): with a direct pair chat the
+        # partners settle their choices between themselves, leaving nothing for the platform
+        # discourse to affect. Use chat_turns=0 configs (pd_debate_llm_nochat, pd_debate_llm_debate*)
+        # for the study; the chat configs are a check / reference condition only.
+        doc=("REFERENCE ONLY, not the study condition (NOTES #51). "
+             "Pair chat: before every round the two partners exchange private messages about the game "
+             "(cheap talk, not binding), then decide. No debate rounds, no feed, no result posts. "
+             "Labels shared within a pair, random across pairs"),
+        bridge_policy='llm',
+        bridge_chat_turns=4,
+        bridge_include_feed=False,
+        bridge_inject_results='none',
+        bridge_label_unit='pair',
+        bridge_comprehension_check=True,
+        bridge_belief_survey=True,
+    ),
+    dict(
+        name='pd_debate_llm_chat_debate',
+        app_sequence=['pd_debate'],
+        num_demo_participants=48,
+        doc="REFERENCE ONLY, not the study condition (NOTES #51). pd_debate_llm_chat + debate rounds with the repeated topic post and result posts (points only) on the platform",
+        bridge_policy='llm',
+        bridge_chat_turns=4,
+        bridge_debate_rounds=2,
+        bridge_inject_results='each',
+        bridge_opening_post=(
+            "Question for everyone: when you deal with the same person again and again, "
+            "is it smarter to trust them or to look out for yourself first? Why?"
+        ),
+        bridge_repeat_opening=True,
+        bridge_label_unit='pair',
+        bridge_comprehension_check=True,
+        bridge_belief_survey=True,
+    ),
+    dict(
+        name='pd_debate_llm_nochat',
+        app_sequence=['pd_debate'],
+        num_demo_participants=48,
+        doc="Control for pd_debate_llm_chat: same settings with chat_turns=0",
+        bridge_policy='llm',
+        bridge_chat_turns=0,
+        bridge_include_feed=False,
+        bridge_inject_results='none',
+        bridge_label_unit='pair',
+        bridge_comprehension_check=True,
+        bridge_belief_survey=True,
+    ),
+    dict(
+        name='pgg',
+        app_sequence=['pgg'],
+        num_demo_participants=16,
+        doc="Public goods game, fixed groups of 4 x 10 rounds, endowment 20, multiplier 1.6 (MPCR 0.4); fixed-strategy bots, no bridge",
+    ),
+    dict(
+        name='pgg_llm',
+        app_sequence=['pgg'],
+        num_demo_participants=16,
+        doc=("Public goods game with LLM decisions via the step-server (MF_SIMULATION_DIR). "
+             "No chat, no debate, no feed, no result posts (NOTES #51, #52)"),
+        bridge_policy='llm',
+        bridge_include_feed=False,
+        bridge_inject_results='none',
+        bridge_comprehension_check=True,
+        bridge_belief_survey=True,
+        bridge_belief_statement=(
+            "When you are in the same group again and again, it is better to contribute to what "
+            "benefits everyone than to look out for yourself first."
+        ),
+    ),
+    dict(
         name='live_test',
         app_sequence=['live_test'],
         num_demo_participants=2,
