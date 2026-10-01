@@ -22,6 +22,12 @@ PGG_BELIEF = (
     "benefits everyone than to look out for yourself first."
 )
 
+NET_CH = dict(
+    bridge_net_channels=True,                       # A_ij of every pair + dyad ledger (dyads.json / dyads.jsonl)
+    bridge_simulation_id='sim_workplace_ch_s1_n48',  # fallback when MF_SIMULATION_DIR is not set
+)
+NET_MEM = dict(bridge_net_memory_mode='decay')      # half life 2 rounds, budget 3200 chars (defaults)
+
 SESSION_CONFIGS = [
     dict(
         name='mf_group',
@@ -285,6 +291,90 @@ SESSION_CONFIGS = [
         )
         for topo in ('ba', 'er')
     ],
+    # -- NOTES #55: channel-compatible dyads (16 agents of sim_workplace_ch_s1_n48, same persona
+    #    set in every arm: the persona change is constant across the arms) ----------------------
+    dict(
+        name='pd_net_off_ch',
+        app_sequence=['pd_debate'],
+        num_demo_participants=16,
+        doc="Control for pd_net_*_ch: no talk at all, but the dyad ledger is written (dyads.json, dyads.jsonl) (NOTES #55)",
+        **{**NET_COMMON, **NET_CH, 'bridge_net_topology': 'none'},
+    ),
+    dict(
+        name='pd_net_ba_ch0',
+        app_sequence=['pd_debate'],
+        num_demo_participants=16,
+        doc="BA network on the channel personas, beta 0, every conversation answered: the #54 network with the #53 personas and the dyad ledger (NOTES #55)",
+        **{**NET_COMMON, **NET_CH, 'bridge_net_topology': 'ba',
+           'bridge_net_channel_beta': 0.0, 'bridge_net_reply_model': 'always'},
+    ),
+    dict(
+        name='pd_net_ba_ch',
+        app_sequence=['pd_debate'],
+        num_demo_participants=16,
+        doc="BA network, compatible pairs talk more (beta 1.0) and incompatible ones are answered less often (reply model reach) (NOTES #55)",
+        **{**NET_COMMON, **NET_CH, 'bridge_net_topology': 'ba',
+           'bridge_net_channel_beta': 1.0, 'bridge_net_reply_model': 'reach'},
+    ),
+    dict(
+        name='pd_net_ba_chsel',
+        app_sequence=['pd_debate'],
+        num_demo_participants=16,
+        doc="Optional: selection only (beta 1.0, every conversation answered) (NOTES #55)",
+        **{**NET_COMMON, **NET_CH, 'bridge_net_topology': 'ba',
+           'bridge_net_channel_beta': 1.0, 'bridge_net_reply_model': 'always'},
+    ),
+    dict(
+        name='pd_net_ba_chrep',
+        app_sequence=['pd_debate'],
+        num_demo_participants=16,
+        doc="Optional: replies only (beta 0, reply model reach); isolates the 'did not reply' signal (NOTES #55)",
+        **{**NET_COMMON, **NET_CH, 'bridge_net_topology': 'ba',
+           'bridge_net_channel_beta': 0.0, 'bridge_net_reply_model': 'reach'},
+    ),
+    dict(
+        name='pd_net_ba_ch_mem',
+        app_sequence=['pd_debate'],
+        num_demo_participants=16,
+        doc="pd_net_ba_ch with communication memory that forgets by age (half life 2 rounds) instead of the 2-round window (NOTES #55)",
+        **{**NET_COMMON, **NET_CH, **NET_MEM, 'bridge_net_topology': 'ba',
+           'bridge_net_channel_beta': 1.0, 'bridge_net_reply_model': 'reach'},
+    ),
+    dict(
+        name='pgg_net_off_ch',
+        app_sequence=['pgg'],
+        num_demo_participants=16,
+        doc="Control for pgg_net_*_ch: no talk, dyad ledger written (NOTES #55)",
+        bridge_belief_statement=PGG_BELIEF,
+        **{**NET_COMMON, **NET_CH, 'bridge_net_topology': 'none'},
+    ),
+    dict(
+        name='pgg_net_ba_ch0',
+        app_sequence=['pgg'],
+        num_demo_participants=16,
+        doc="Public goods game, BA network on the channel personas, beta 0, every conversation answered (NOTES #55)",
+        bridge_belief_statement=PGG_BELIEF,
+        **{**NET_COMMON, **NET_CH, 'bridge_net_topology': 'ba',
+           'bridge_net_channel_beta': 0.0, 'bridge_net_reply_model': 'always'},
+    ),
+    dict(
+        name='pgg_net_ba_ch',
+        app_sequence=['pgg'],
+        num_demo_participants=16,
+        doc="Public goods game, BA network, beta 1.0, reply model reach (NOTES #55)",
+        bridge_belief_statement=PGG_BELIEF,
+        **{**NET_COMMON, **NET_CH, 'bridge_net_topology': 'ba',
+           'bridge_net_channel_beta': 1.0, 'bridge_net_reply_model': 'reach'},
+    ),
+    dict(
+        name='pgg_net_ba_ch_mem',
+        app_sequence=['pgg'],
+        num_demo_participants=16,
+        doc="pgg_net_ba_ch with decaying communication memory (NOTES #55)",
+        bridge_belief_statement=PGG_BELIEF,
+        **{**NET_COMMON, **NET_CH, **NET_MEM, 'bridge_net_topology': 'ba',
+           'bridge_net_channel_beta': 1.0, 'bridge_net_reply_model': 'reach'},
+    ),
     dict(
         name='live_test',
         app_sequence=['live_test'],
