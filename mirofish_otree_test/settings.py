@@ -393,6 +393,9 @@ SESSION_CONFIG_DEFAULTS = dict(
     # groups are consecutive), e.g. personas_meta.json "agent_order" of
     # make_workplace_sim.py. Unset: participant i is agent i-1.
     agent_ids=json.loads(environ['MF_AGENT_IDS']) if environ.get('MF_AGENT_IDS') else None,
+    # Replication seed for the bridge (labels, network graph, contact rates, contacts).
+    # The LLM's own sampling is not seeded, so runs with the same seed still differ.
+    bridge_seed=int(environ.get('MF_BRIDGE_SEED', '0')),
 )
 
 PARTICIPANT_FIELDS = []
