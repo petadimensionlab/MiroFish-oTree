@@ -32,6 +32,16 @@ In `trust` and `ultimatum` the first movers decide, a `StageBarrier` wait page (
 
 `MF_AGENT_IDS` (JSON list) sets which MiroFish agent sits in which participant slot for any session config; consecutive slots form the pairs / groups. Use it with MiroFish's `make_workplace_sim.py` `agent_order` to seat colleagues from the same company but different departments together.
 
+## Network talk, channel dyads and replication seeds
+
+Apps `pd_debate`, `pgg`, `beauty`, `trust`, `ultimatum` are described above; what was added since is on the session-config side (all in `settings.py`, bridge settings documented in MiroFish-Offline `docs/otree-integration/README.md` §11).
+
+- **Network talk (MiroFish NOTES #54).** `pd_net_off` (control: same labelling, no talk), `pd_net_er`, `pd_net_ba`, `pd_net_ws`, `pd_net_ring`; `pgg_net_off`, `pgg_net_ba`, `pgg_net_er`. 16 participants, `NET_COMMON`: LLM policy, no feed, no result injection, session labels with `bridge_label_order_per_agent=True`, comprehension check and belief survey, mean degree 4, contact mean 1.0, dispersion 0.5, 2 turns. Participants talk one to one with graph neighbours who are never their PD partner / group mate.
+- **Channel-compatible dyads and memory (NOTES #55).** Same 16 agents of `sim_workplace_ch_s1_n48` (`bridge_net_channels=True`): `pd_net_off_ch` (no talk, ledger written), `pd_net_ba_ch0` (β 0, every conversation answered), `pd_net_ba_ch` (β 1.0, reply model `reach`), `pd_net_ba_ch_mem` (adds `bridge_net_memory_mode='decay'`, half life 2, 3200 chars), optional `pd_net_ba_chsel` and `pd_net_ba_chrep`; pgg versions `pgg_net_off_ch`, `pgg_net_ba_ch0`, `pgg_net_ba_ch`, `pgg_net_ba_ch_mem`. `pd_net_ba_chsel` and `pd_net_ba_chrep` have not been run.
+- **`network_transcript`** (`pd_debate` only): one JSON field per agent × round with that round's one-to-one conversations with non-partners (`conv_id`, `other_agent_id`, `initiator`, messages), next to `chat_transcript` in `pd_debate_custom.csv`.
+- **`MF_BRIDGE_SEED`** (default 0): session config `bridge_seed`, the bridge's `seed` for labels, network graph, contact rates and contact draws. The LLM's own sampling is not seeded, so the same seed does not reproduce a run exactly; use different seeds for replication runs.
+- **`MF_AGENT_IDS`** now seats agents in every app above (`agent_ids` in the session config).
+
 ## Running
 
 ```sh
