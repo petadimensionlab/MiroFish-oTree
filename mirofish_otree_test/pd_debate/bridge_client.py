@@ -42,13 +42,18 @@ def _post(path, payload, attempts=MAX_ATTEMPTS):
     return None, error, attempts
 
 
+def net_settings(cfg):
+    """Session config bridge_net_<name> keys -> the bridge's net_<name> settings (NOTES #54)."""
+    return {k[7:]: v for k, v in cfg.items() if k.startswith('bridge_net_')}
+
+
 def configure(session_code, **settings):
     data, error, _ = _post('/configure', {'session_code': session_code, **settings})
     return data if error is None else {'error': error}
 
 
 def decide(session_code, round_number, agent_id, history, default_choice):
-    """Returns dict(choice, reason, source, latency_sec, missing, attempts, chat)."""
+    """Returns dict(choice, reason, source, latency_sec, missing, attempts, chat, network_chat)."""
     t0 = time.time()
     data, error, attempts = _post('/decide', {
         'session_code': session_code,
@@ -66,6 +71,7 @@ def decide(session_code, round_number, agent_id, history, default_choice):
             missing=bool(data.get('missing', False)),
             attempts=attempts,
             chat=data.get('chat'),
+            network_chat=data.get('network_chat'),
         )
     return dict(
         choice=default_choice,
@@ -75,6 +81,7 @@ def decide(session_code, round_number, agent_id, history, default_choice):
         missing=True,
         attempts=attempts,
         chat=None,
+        network_chat=None,
     )
 
 
@@ -164,6 +171,7 @@ def configure_game(session, game, game_params, agents, num_rounds, barrier_log):
         belief_survey=cfg.get('bridge_belief_survey', False),
         belief_statement=cfg.get('bridge_belief_statement'),
         comprehension_check=cfg.get('bridge_comprehension_check', False),
+        **net_settings(cfg),
     )
     if 'error' in result:
         with open(barrier_log, 'a') as f:
