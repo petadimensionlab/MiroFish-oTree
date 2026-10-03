@@ -27,6 +27,12 @@ NET_CH = dict(
     bridge_simulation_id='sim_workplace_ch_s1_n48',  # fallback when MF_SIMULATION_DIR is not set
 )
 NET_MEM = dict(bridge_net_memory_mode='decay')      # half life 2 rounds, budget 3200 chars (defaults)
+# Betrayal and reputation (MiroFish NOTES #57). NET_REV: after each round every agent is told what the
+# people it talked with chose and what their partner / group chose; a broken word or an exploit stays
+# in memory twice as long. NET_REP adds: what an agent was told weights whom it contacts next.
+NET_REV = dict(bridge_net_dyad_hooks='betrayal,reputation', bridge_net_reveal_choices='pair',
+               bridge_net_betrayal_salience=2.0)
+NET_REP = dict(bridge_net_reputation_word_weight=2.0, bridge_net_reputation_choice_weight=2.0)
 
 SESSION_CONFIGS = [
     dict(
@@ -341,6 +347,30 @@ SESSION_CONFIGS = [
            'bridge_net_channel_beta': 1.0, 'bridge_net_reply_model': 'reach'},
     ),
     dict(
+        name='pd_net_ba_ch_mem_rev',
+        app_sequence=['pd_debate'],
+        num_demo_participants=16,
+        doc="pd_net_ba_ch_mem plus revealed choices: after each round agents are told what their conversation partners and those partners' partners chose; broken words and exploits stay in memory longer (NOTES #57)",
+        **{**NET_COMMON, **NET_CH, **NET_MEM, **NET_REV, 'bridge_net_topology': 'ba',
+           'bridge_net_channel_beta': 1.0, 'bridge_net_reply_model': 'reach'},
+    ),
+    dict(
+        name='pd_net_ba_ch_mem_rev_talked',
+        app_sequence=['pd_debate'],
+        num_demo_participants=16,
+        doc="Optional: pd_net_ba_ch_mem_rev telling agents only what the people they talked with chose, not their partners (NOTES #57)",
+        **{**NET_COMMON, **NET_CH, **NET_MEM, **NET_REV, 'bridge_net_reveal_choices': 'talked',
+           'bridge_net_topology': 'ba', 'bridge_net_channel_beta': 1.0, 'bridge_net_reply_model': 'reach'},
+    ),
+    dict(
+        name='pd_net_ba_ch_mem_rep',
+        app_sequence=['pd_debate'],
+        num_demo_participants=16,
+        doc="pd_net_ba_ch_mem_rev plus reputation: what an agent was told weights whom it starts conversations with (NOTES #57)",
+        **{**NET_COMMON, **NET_CH, **NET_MEM, **NET_REV, **NET_REP, 'bridge_net_topology': 'ba',
+           'bridge_net_channel_beta': 1.0, 'bridge_net_reply_model': 'reach'},
+    ),
+    dict(
         name='pgg_net_off_ch',
         app_sequence=['pgg'],
         num_demo_participants=16,
@@ -373,6 +403,24 @@ SESSION_CONFIGS = [
         doc="pgg_net_ba_ch with decaying communication memory (NOTES #55)",
         bridge_belief_statement=PGG_BELIEF,
         **{**NET_COMMON, **NET_CH, **NET_MEM, 'bridge_net_topology': 'ba',
+           'bridge_net_channel_beta': 1.0, 'bridge_net_reply_model': 'reach'},
+    ),
+    dict(
+        name='pgg_net_ba_ch_mem_rev',
+        app_sequence=['pgg'],
+        num_demo_participants=16,
+        doc="pgg_net_ba_ch_mem plus revealed contributions: after each round agents are told what their conversation partners and their partners' groups put in (NOTES #57)",
+        bridge_belief_statement=PGG_BELIEF,
+        **{**NET_COMMON, **NET_CH, **NET_MEM, **NET_REV, 'bridge_net_topology': 'ba',
+           'bridge_net_channel_beta': 1.0, 'bridge_net_reply_model': 'reach'},
+    ),
+    dict(
+        name='pgg_net_ba_ch_mem_rep',
+        app_sequence=['pgg'],
+        num_demo_participants=16,
+        doc="pgg_net_ba_ch_mem_rev plus reputation-weighted contacts (NOTES #57)",
+        bridge_belief_statement=PGG_BELIEF,
+        **{**NET_COMMON, **NET_CH, **NET_MEM, **NET_REV, **NET_REP, 'bridge_net_topology': 'ba',
            'bridge_net_channel_beta': 1.0, 'bridge_net_reply_model': 'reach'},
     ),
     dict(
